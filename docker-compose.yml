@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: rasha
+      POSTGRES_PASSWORD: rasha_pass
+      POSTGRES_DB: rasha_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  api:
+    build: ./server
+    environment:
+      PORT: 8080
+      DATABASE_URL: postgres://rasha:rasha_pass@postgres:5432/rasha_db
+      JWT_SECRET: change_me_long_secret
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server:/usr/src/app
+    command: npm run dev
+
+volumes:
+  pgdata:
