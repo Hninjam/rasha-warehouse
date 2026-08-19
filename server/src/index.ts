@@ -1,26 +1,11 @@
-import express from "express";
-import cors from "cors";
 import dotenv from "dotenv";
-import authRoutes from "./routes/auth";
-import inventoryRoutes from "./routes/inventory";
 import { createServer } from "http";
 import { WebSocketServer } from "ws";
+import { createApp } from "./app";
 
 dotenv.config();
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-// health
-app.get("/api/health", (_, res) => res.json({ status: "ok", time: new Date().toISOString() }));
-
-// routes
-app.use("/api/auth", authRoutes);
-app.use("/api/inventory", inventoryRoutes);
-
-// simple fallback
-app.use((_, res) => res.status(404).json({ error: "not found" }));
+const app = createApp();
 
 const server = createServer(app);
 const port = process.env.PORT || 8080;
