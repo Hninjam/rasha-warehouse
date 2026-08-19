@@ -25,4 +25,5 @@ TestResults.xml
 ### Node ###
 node_modules/
 dist/
+coverage/
 .env

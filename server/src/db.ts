@@ -1,8 +1,8 @@
 import { Pool, QueryResult } from "pg";
-import { config } from "./config";
+import { databaseUrl } from "./config";
 
 export const pool = new Pool({
-  connectionString: config.databaseUrl,
+  connectionString: databaseUrl,
 });
 
 // Errors on idle clients are emitted on the pool; without a listener they are

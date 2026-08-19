@@ -1,26 +1,12 @@
-import express from "express";
-import cors from "cors";
-import authRoutes from "./routes/auth";
-import inventoryRoutes from "./routes/inventory";
 import { createServer } from "http";
 import { WebSocketServer } from "ws";
-import { config } from "./config";
+import { createApp } from "./app";
+import { port, validateConfig } from "./config";
 import { closePool } from "./db";
-import { errorHandler, notFoundHandler } from "./errors";
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+validateConfig();
 
-// health
-app.get("/api/health", (_, res) => res.json({ status: "ok", time: new Date().toISOString() }));
-
-// routes
-app.use("/api/auth", authRoutes);
-app.use("/api/inventory", inventoryRoutes);
-
-app.use(notFoundHandler);
-app.use(errorHandler);
+const app = createApp();
 
 const server = createServer(app);
 
@@ -43,12 +29,12 @@ wss.on("connection", (ws) => {
 });
 
 server.on("error", (err) => {
-  console.error(`failed to listen on port ${config.port}`, err);
+  console.error(`failed to listen on port ${port}`, err);
   process.exit(1);
 });
 
-server.listen(config.port, () => {
-  console.log(`API listening on http://0.0.0.0:${config.port}`);
+server.listen(port, () => {
+  console.log(`API listening on http://0.0.0.0:${port}`);
 });
 
 let shuttingDown = false;

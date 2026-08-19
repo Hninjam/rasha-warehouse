@@ -2,7 +2,7 @@ import express from "express";
 import { query } from "../db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { config } from "../config";
+import { jwtSecret } from "../config";
 import { asyncHandler, HttpError } from "../errors";
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.post(
     const match = await bcrypt.compare(password, user.password_hash);
     if (!match) throw new HttpError(401, "invalid credentials");
 
-    const token = jwt.sign({ userId: user.id, personnel_code: user.personnel_code, role: user.role }, config.jwtSecret, { expiresIn: "8h" });
+    const token = jwt.sign({ userId: user.id, personnel_code: user.personnel_code, role: user.role }, jwtSecret(), { expiresIn: "8h" });
 
     res.json({ token, user: { id: user.id, personnel_code: user.personnel_code, full_name: user.full_name, role: user.role } });
   })
