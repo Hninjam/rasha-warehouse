@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'widgets/rtl_scaffold.dart';
+
 void main() {
   runApp(RashaApp());
 }
@@ -29,31 +31,43 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality( // RTL support
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        body: Center(
-          child: Card(
-            margin: EdgeInsets.all(24),
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Text('RASHA — ورود', style: TextStyle(fontSize: 20)),
-                TextField(controller: codeCtrl, decoration: InputDecoration(labelText: 'کد پرسنلی')),
-                TextField(controller: passCtrl, decoration: InputDecoration(labelText: 'رمز عبور'), obscureText: true),
-                SizedBox(height: 12),
-                ElevatedButton(onPressed: () {
-                  // TODO: call API /api/auth/login
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => HomePage()));
-                }, child: Text('ورود'))
-              ]),
-            ),
+    return RtlScaffold(
+      body: Center(
+        child: Card(
+          margin: EdgeInsets.all(24),
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Text('RASHA — ورود', style: TextStyle(fontSize: 20)),
+              LabeledField(controller: codeCtrl, label: 'کد پرسنلی'),
+              LabeledField(controller: passCtrl, label: 'رمز عبور', obscureText: true),
+              SizedBox(height: 12),
+              ElevatedButton(onPressed: () {
+                // TODO: call API /api/auth/login
+                Navigator.push(context, MaterialPageRoute(builder: (_) => HomePage()));
+              }, child: Text('ورود'))
+            ]),
           ),
         ),
       ),
     );
   }
 }
+
+class HomeTab {
+  const HomeTab(this.icon, this.label);
+
+  final IconData icon;
+  final String label;
+}
+
+const List<HomeTab> homeTabs = [
+  HomeTab(Icons.dashboard, 'داشبورد'),
+  HomeTab(Icons.edit, 'ثبت شمارش'),
+  HomeTab(Icons.bar_chart, 'گزارش‌ها'),
+  HomeTab(Icons.chat, 'چت'),
+  HomeTab(Icons.person, 'حساب کاربری'),
+];
 
 class HomePage extends StatefulWidget {
   @override
@@ -62,24 +76,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int idx = 0;
-  final pages = [Center(child: Text('داشبورد')), Center(child: Text('ثبت شمارش')), Center(child: Text('گزارش‌ها')), Center(child: Text('چت')), Center(child: Text('حساب کاربری'))];
+
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        body: pages[idx],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: idx,
-          onTap: (i) => setState(() => idx = i),
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'داشبورد'),
-            BottomNavigationBarItem(icon: Icon(Icons.edit), label: 'ثبت شمارش'),
-            BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'گزارش‌ها'),
-            BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'چت'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حساب کاربری'),
-          ],
-        ),
+    return RtlScaffold(
+      body: Center(child: Text(homeTabs[idx].label)),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: idx,
+        onTap: (i) => setState(() => idx = i),
+        items: [
+          for (final tab in homeTabs) BottomNavigationBarItem(icon: Icon(tab.icon), label: tab.label),
+        ],
       ),
     );
   }

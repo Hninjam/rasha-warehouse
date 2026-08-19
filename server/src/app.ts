@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth";
 import inventoryRoutes from "./routes/inventory";
+import { notFound, sendError } from "./http";
 
 export function createApp() {
   const app = express();
@@ -16,7 +17,12 @@ export function createApp() {
   app.use("/api/inventory", inventoryRoutes);
 
   // simple fallback
-  app.use((_, res) => res.status(404).json({ error: "not found" }));
+  app.use((_, res) => notFound(res));
+
+  app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    console.error(err);
+    sendError(res, 500, "internal error");
+  });
 
   return app;
 }

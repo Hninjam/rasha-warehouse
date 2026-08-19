@@ -1,14 +1,11 @@
-import dotenv from "dotenv";
 import { createServer } from "http";
 import { WebSocketServer } from "ws";
 import { createApp } from "./app";
-
-dotenv.config();
+import { config } from "./config";
 
 const app = createApp();
 
 const server = createServer(app);
-const port = process.env.PORT || 8080;
 
 // WebSocket server (stub for real-time chat & sync)
 const wss = new WebSocketServer({ server, path: "/ws" });
@@ -20,6 +17,6 @@ wss.on("connection", (ws) => {
   });
 });
 
-server.listen(port, () => {
-  console.log(`API listening on http://0.0.0.0:${port}`);
+server.listen(config.port, () => {
+  console.log(`API listening on http://0.0.0.0:${config.port}`);
 });
