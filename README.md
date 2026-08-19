@@ -4,6 +4,8 @@
 
 روش سریع شروع (لوکال با Docker):
 1. تغییر متغیرهای محیطی در docker-compose.yml یا در یک فایل .env
+   - `JWT_SECRET` الزامی است و اگر تنظیم نشود سرویس API با خطا بالا نمی‌آید.
+   - `DATABASE_URL` و `PORT` اختیاری هستند (مقدار پیش‌فرض دارند).
 2. اجرا:
    docker compose up --build
 

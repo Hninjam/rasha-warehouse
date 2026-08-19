@@ -1,13 +1,25 @@
-import { Pool } from "pg";
-import dotenv from "dotenv";
-dotenv.config();
-
-const connectionString = process.env.DATABASE_URL || "postgres://rasha:rasha_pass@localhost:5432/rasha_db";
+import { Pool, QueryResult } from "pg";
+import { config } from "./config";
 
 export const pool = new Pool({
-  connectionString,
+  connectionString: config.databaseUrl,
 });
 
-export async function query(text: string, params?: any[]) {
-  return pool.query(text, params);
+// Errors on idle clients are emitted on the pool; without a listener they are
+// thrown as uncaught exceptions and take the process down.
+pool.on("error", (err) => {
+  console.error("unexpected postgres pool error", err);
+});
+
+export async function query(text: string, params?: any[]): Promise<QueryResult> {
+  try {
+    return await pool.query(text, params);
+  } catch (err) {
+    console.error("database query failed", { text, err });
+    throw err;
+  }
+}
+
+export async function closePool(): Promise<void> {
+  await pool.end();
 }
