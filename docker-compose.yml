@@ -3,20 +3,21 @@ services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_USER: rasha
-      POSTGRES_PASSWORD: rasha_pass
-      POSTGRES_DB: rasha_db
+      POSTGRES_USER: ${POSTGRES_USER:?set in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-rasha_db}
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
 
   api:
     build: ./server
     environment:
       PORT: 8080
-      DATABASE_URL: postgres://rasha:rasha_pass@postgres:5432/rasha_db
-      JWT_SECRET: change_me_long_secret
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-rasha_db}
+      JWT_SECRET: ${JWT_SECRET:?set in .env (min 32 chars)}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
     depends_on:
       - postgres
     ports:

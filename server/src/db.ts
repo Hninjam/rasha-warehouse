@@ -1,11 +1,8 @@
 import { Pool } from "pg";
-import dotenv from "dotenv";
-dotenv.config();
-
-const connectionString = process.env.DATABASE_URL || "postgres://rasha:rasha_pass@localhost:5432/rasha_db";
+import { getDatabaseUrl } from "./config";
 
 export const pool = new Pool({
-  connectionString,
+  connectionString: getDatabaseUrl(),
 });
 
 export async function query(text: string, params?: any[]) {
